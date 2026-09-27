@@ -36,7 +36,7 @@
 <body class="text-white font-mono antialiased min-h-screen flex items-center justify-center p-4">
 
     <!-- GLOBAL CINEMATIC BACKGROUND -->
-    <div class="fixed inset-0 z-[-1] bg-[url('stark-tower.jpg')] bg-cover bg-top bg-no-repeat bg-fixed opacity-40"></div>
+    <div class="fixed inset-0 z-[-1] bg-[url('stark_tower.jpg')] bg-cover bg-top bg-no-repeat bg-fixed opacity-40"></div>
     <div class="fixed inset-0 z-[-1] bg-gradient-to-b from-stark-dark/10 via-stark-dark/70 to-stark-dark z-0"></div>
 
     <!-- SQUAD ASSEMBLY TERMINAL -->
@@ -465,9 +465,13 @@
                 });
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.warn('Server returned an error:', errorData);
+                    const details = Array.isArray(errorData.details) ? ` ${errorData.details.join(' ')}` : '';
+                    throw new Error((errorData.error || 'The server rejected this registration.') + details);
                 }
             } catch (networkError) {
+                if (!(networkError instanceof TypeError)) {
+                    throw networkError;
+                }
                 console.warn('Backend unreachable — data saved to browser only:', networkError);
             }
 
