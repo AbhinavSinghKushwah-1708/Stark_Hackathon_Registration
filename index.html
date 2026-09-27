@@ -54,7 +54,7 @@
 </head>
 <body class="text-white font-mono antialiased">
 <!-- SPIDER-MAN INTERACTIVE DRAGGABLE SCROLLBAR -->
-<div id="spidey-scroll-container" class="fixed top-0 right-2 md:right-6 bottom-0 w-20 z-[100] flex flex-col items-center select-none">
+<div id="spidey-scroll-container" class="fixed top-0 right-2 md:right-6 bottom-0 w-20 z-[100] hidden flex flex-col items-center select-none">
     
     <!-- The Web Line -->
     <div id="web-line" class="w-[2px] bg-white/60 shadow-[0_0_10px_rgba(255,255,255,0.8)] h-0 pointer-events-none"></div>
@@ -186,31 +186,28 @@
                 <h2 class="text-3xl font-stark text-white mb-2 uppercase tracking-widest">Initialize Registration</h2>
                 <p class="font-mono text-stark-glow mb-8 text-sm">System ready. Enter squad credentials below.</p>
 
-                <form class="space-y-6 font-mono">
+                <form id="registration-form" class="space-y-6 font-mono">
                     <!-- Commander Details -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Commander (Team Lead)</label>
-                                <input type="text" id="commander-name" placeholder="Tony Stark" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                                <input type="text" id="commander-name" placeholder="Tony Stark" minlength="2" maxlength="60" required class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
                             </div>
                             <div>
                                 <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Comms (Email)</label>
-                                <input type="email" id="commander-email" placeholder="t.stark@stark.com" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                                <input type="email" id="commander-email" placeholder="t.stark@stark.com" required class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
                             </div>
                         </div>
                     
                     <div>
                         <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Squad Designation (Team Name)</label>
-                        <input type="text" id="squad-name" placeholder="e.g. Iron Legion" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        <input type="text" id="team-name" placeholder="e.g. Iron Legion" minlength="2" maxlength="50" required class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
                     </div>
 
-<!-- Change this in your index.html file -->
- <button type="button" onclick="validateRegistration()" id="execute-btn" class="w-full mt-4 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
-
-     <a href="squad.html" class="block text-center w-full mt-8 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
-         Execute Registration File
-        </a>        
-    </button>
+                    <p id="registration-message" class="hidden text-sm" role="status" aria-live="polite"></p>
+<button type="submit" class="block text-center w-full mt-8 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
+    Execute Registration File
+</button>
                 </form>
             </div>
         </div>
@@ -224,63 +221,89 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <script>
-        // --- J.A.R.V.I.S. FORM VALIDATION ---
-    function validateRegistration() {
-        const errorDiv = document.getElementById('form-error');
-        const squadName = document.getElementById('squad-name').value.trim();
-        const cmdName = document.getElementById('commander-name').value.trim();
-        const cmdEmail = document.getElementById('commander-email').value.trim();
-        const rosterContainer = document.getElementById('roster-container');
-        
-        // Reset error state
-        errorDiv.classList.add('hidden');
-        errorDiv.textContent = "";
+        const registrationForm = document.getElementById('registration-form');
+        const registrationMessage = document.getElementById('registration-message');
+        const personNamePattern = /^[\p{L}\p{M}]+(?:[ .'-][\p{L}\p{M}]+)*\.?$/u;
+        const draftStorageKey = 'starkHackathonDraft';
+        const commanderName = document.getElementById('commander-name');
+        const commanderEmail = document.getElementById('commander-email');
+        const teamName = document.getElementById('team-name');
 
-        // 1. Check if Commander fields are empty
-        if (!cmdName || !cmdEmail) {
-            showError("ACCESS DENIED: Commander credentials cannot be blank.");
-            return;
+        function validateRegistrationNames() {
+            const normalizedName = commanderName.value.trim();
+            const normalizedTeamName = teamName.value.trim();
+            commanderName.setCustomValidity(
+                !personNamePattern.test(normalizedName)
+                    ? 'Enter a valid name using letters, spaces, apostrophes, periods, or hyphens.'
+                    : /[bcdfghjklmnpqrstvwxz]{5,}/i.test(normalizedName)
+                        ? 'Please enter a valid name, not a random string.'
+                        : ''
+            );
+            teamName.setCustomValidity(
+                !/^[\p{L}\p{N}][\p{L}\p{M}\p{N} .&'-]{0,49}$/u.test(normalizedTeamName)
+                    ? 'Enter a team name using letters, numbers, spaces, or . & \' - characters.'
+                    : /[bcdfghjklmnpqrstvwxz]{5,}/i.test(normalizedTeamName)
+                        ? 'Please enter a team name, not a random string.'
+                    : ''
+            );
         }
 
-        // 2. Anti-Gibberish Check for Squad Name (Only letters, numbers, spaces, min 3 chars)
-        const squadNameRegex = /^[a-zA-Z0-9\s]{3,30}$/;
-        if (!squadNameRegex.test(squadName)) {
-            showError("ACCESS DENIED: Squad Designation invalid. Use 3-30 alphanumeric characters. No special symbols.");
-            return;
+        function persistRegistrationDraft() {
+            localStorage.setItem(draftStorageKey, JSON.stringify({
+                commander: {
+                    name: commanderName.value.trim(),
+                    email: commanderEmail.value.trim()
+                },
+                teamName: teamName.value.trim()
+            }));
         }
 
-        // 3. Check all Operative fields (Iterate through every input and select in the roster)
-        const rosterInputs = rosterContainer.querySelectorAll('input, select');
-        for (let i = 0; i < rosterInputs.length; i++) {
-            if (!rosterInputs[i].value.trim()) {
-                showError("ACCESS DENIED: Incomplete operative data detected in Squad Roster.");
+        try {
+            const savedDraft = localStorage.getItem(draftStorageKey);
+            if (savedDraft) {
+                const draft = JSON.parse(savedDraft);
+                commanderName.value = draft.commander && draft.commander.name || '';
+                commanderEmail.value = draft.commander && draft.commander.email || '';
+                teamName.value = draft.teamName || '';
+            }
+        } catch (error) {
+            registrationMessage.textContent = 'Unable to load your saved registration draft from this browser.';
+            registrationMessage.classList.remove('hidden');
+            registrationMessage.classList.add('text-stark-red');
+            console.error('Unable to load registration draft:', error);
+        }
+
+        registrationForm.addEventListener('input', () => {
+            validateRegistrationNames();
+            try {
+                persistRegistrationDraft();
+            } catch (error) {
+                registrationMessage.textContent = 'Unable to save your registration in this browser. Enable site storage and try again.';
+                registrationMessage.classList.remove('hidden');
+                registrationMessage.classList.add('text-stark-red');
+                console.error('Unable to save registration draft:', error);
+            }
+        });
+
+        registrationForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            validateRegistrationNames();
+
+            if (!registrationForm.reportValidity()) {
                 return;
             }
-        }
 
-        // 4. If everything passes, execute success sequence!
-        const executeBtn = document.getElementById('execute-btn');
-        executeBtn.textContent = "UPLOADING TO STARK MAINFRAME...";
-        executeBtn.classList.replace('text-stark-glow', 'text-white');
-        executeBtn.classList.replace('border-stark-glow', 'border-white');
-        
-        // Simulate a page redirect or final success state after 2 seconds
-        setTimeout(() => {
-            executeBtn.classList.replace('bg-stark-glow/10', 'bg-green-500');
-            executeBtn.classList.replace('border-white', 'border-green-500');
-            executeBtn.textContent = "REGISTRATION COMPLETE";
-            
-            // Optional: Redirect to a success page here
-            // window.location.href = "success.html";
-        }, 2000);
-    }
+            try {
+                persistRegistrationDraft();
+                window.location.href = 'squad.html';
+            } catch (error) {
+                registrationMessage.textContent = 'Unable to save your registration in this browser. Enable site storage and try again.';
+                registrationMessage.classList.remove('hidden');
+                registrationMessage.classList.add('text-stark-red');
+                console.error('Unable to save registration draft:', error);
+            }
+        });
 
-    // Helper function to display the red error box
-    function showError(message) {
-        const errorDiv = document.getElementById('form-error');
-        errorDiv.textContent = message;
-        errorDiv.classList.remove('hidden');
-    }
         // --- SPIDER-MAN DRAG-TO-SCROLL LOGIC ---
     let isDragging = false;
     let startMouseY;
@@ -342,10 +365,20 @@ window.addEventListener('scroll', () => {
     
     const webLine = document.getElementById('web-line');
     const spideyIcon = document.getElementById('spidey-icon');
+    const spideyScrollContainer = document.getElementById('spidey-scroll-container');
+    const introScreen = document.getElementById('marvel-intro-screen');
     
     // Allow the web to drop down to 85% of the screen height
     const maxDrop = winHeight * 0.85; 
     
+    if (introScreen.style.display !== 'none') {
+        spideyScrollContainer.classList.add('hidden');
+        webLine.style.height = '0px';
+        spideyIcon.classList.add('hidden');
+        return;
+    }
+
+    spideyScrollContainer.classList.remove('hidden');
     if (scrollTop > 20) {
         spideyIcon.classList.remove('hidden');
         // Apply the mapped height to the web line
@@ -356,19 +389,6 @@ window.addEventListener('scroll', () => {
         webLine.style.height = '0px';
     }
 
-    // --- REAL-TIME COMMANDER SYNC ---
-    const cmdNameInput = document.getElementById('commander-name');
-    const cmdEmailInput = document.getElementById('commander-email');
-    const op1NameInput = document.getElementById('op1-name');
-    const op1EmailInput = document.getElementById('op1-email');
-
-    cmdNameInput.addEventListener('input', (e) => {
-        op1NameInput.value = e.target.value;
-    });
-
-    cmdEmailInput.addEventListener('input', (e) => {
-        op1EmailInput.value = e.target.value;
-    });     
 });
         const marvelVideo = document.getElementById('marvel-video');
         const introScreen = document.getElementById('marvel-intro-screen');
@@ -386,6 +406,7 @@ window.addEventListener('scroll', () => {
                 onComplete: () => {
                     introScreen.style.display = 'none';
                     mainContent.classList.remove('hidden');
+                    window.dispatchEvent(new Event('scroll'));
                     
                     gsap.fromTo(".gs-reveal", 
                         { y: 30, opacity: 0 }, 
