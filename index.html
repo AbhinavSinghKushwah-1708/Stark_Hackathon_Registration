@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stark Industries Hackathon</title>
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Orbitron (Headings) and Share Tech Mono (Body) -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        stark: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                    },
+                    colors: {
+                        stark: {
+                            red: '#E23636', /* Iron Man Red */
+                            glow: '#38bdf8', /* Arc Reactor Blue */
+                            dark: '#0a0a0a'  /* Dark Metal */
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+                    /* Hide default scrollbar for a cleaner cinematic look */
+            ::-webkit-scrollbar { width: 0px; background: transparent; }
+            html { scrollbar-width: none; }
+
+            /* Spidey Swing Physics */
+            @keyframes swing {
+                0% { transform: rotate(-5deg); }
+                50% { transform: rotate(5deg); }
+                100% { transform: rotate(-5deg); }
+            }
+            .animate-swing {
+                animation: swing 3s ease-in-out infinite;
+                transform-origin: top center; /* Ensures he swings from the web, not his center */
+            }
+        body { background-color: #0a0a0a; overflow-x: hidden; }
+        .neon-border { box-shadow: 0 0 10px #38bdf8, inset 0 0 10px #38bdf8; }
+        .text-glow { text-shadow: 0 0 15px rgba(226, 54, 54, 0.8); }
+    </style>
+</head>
+<body class="text-white font-mono antialiased">
+<!-- SPIDER-MAN INTERACTIVE DRAGGABLE SCROLLBAR -->
+<div id="spidey-scroll-container" class="fixed top-0 right-2 md:right-6 bottom-0 w-20 z-[100] flex flex-col items-center select-none">
+    
+    <!-- The Web Line -->
+    <div id="web-line" class="w-[2px] bg-white/60 shadow-[0_0_10px_rgba(255,255,255,0.8)] h-0 pointer-events-none"></div>
+    
+    <!-- Spider-Man Image (The Draggable Thumb) -->
+    <div id="spidey-icon" class="relative -mt-2 hidden cursor-grab active:cursor-grabbing">
+        <img src="spiderman-hanging.png" alt="Spider-Man" class="w-16 h-20 md:w-24 md:h-28 object-contain animate-swing drop-shadow-[0_0_8px_rgba(255,255,255,0.5)] pointer-events-auto" draggable="false">
+    </div>
+</div>
+    <!-- THE PRELOADER: Marvel Video Intro with Skip Button -->
+    <div id="marvel-intro-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center">
+        <video id="marvel-video" class="min-w-full min-h-full object-cover" autoplay muted playsinline>
+            <source src="marvel_intro.mp4" type="video/mp4">
+        </video>
+        
+        <!-- Skip Button -->
+        <button id="skip-btn" class="absolute bottom-8 right-8 z-[60] px-6 py-2 border border-white/30 text-white/60 font-mono text-sm tracking-[0.2em] uppercase transition-all hover:bg-white/10 hover:text-white hover:border-white backdrop-blur-sm cursor-pointer">
+            Skip Intro >>
+        </button>
+    </div>
+
+    <!-- Cinematic Dark Background -->
+<!-- GLOBAL CINEMATIC BACKGROUND (Stark Tower Vibe) -->
+<!-- GLOBAL CINEMATIC BACKGROUND -->
+<div class="fixed inset-0 z-[-1] bg-[url('stark_tower.jpg')] bg-cover bg-top bg-no-repeat bg-fixed opacity-50"></div>
+<div class="fixed inset-0 z-[-1] bg-gradient-to-b from-stark-dark/10 via-stark-dark/70 to-stark-dark z-0"></div>
+    <!-- THE HERO SECTION (Stark High-Tech UI) -->
+<!-- THE HERO SECTION (Bottom-Aligned for Tower Background) -->
+<main id="main-content" class="relative hidden min-h-screen flex items-end justify-center overflow-hidden pb-24 border-t-4 border-stark-glow">
+    <div class="relative z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center mt-64">
+        
+        <!-- Pinned Label -->
+        <p class="text-stark-glow font-stark tracking-[0.4em] uppercase mb-2 text-sm md:text-base gs-reveal font-bold drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]">
+            Stark Industries Presents
+        </p>
+        
+        <!-- Main Title -->
+        <h1 class="text-6xl md:text-7xl lg:text-8xl font-stark font-black text-white mb-6 uppercase tracking-wider gs-reveal drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] leading-none">
+            GLOBAL<br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-stark-glow">HACKATHON</span>
+        </h1>
+        
+        <!-- Description -->
+        <p class="text-gray-300 text-lg md:text-xl mb-10 max-w-2xl mx-auto font-mono gs-reveal bg-black/50 backdrop-blur-sm p-4 border-l-4 border-stark-glow rounded-r-lg shadow-[0_0_15px_rgba(0,0,0,0.8)]">
+            "Assemble your squad. Engineer the future. We are looking for Earth's mightiest developers to upgrade the world."
+        </p>
+        
+        <!-- Action Button (Scrolls to Form) -->
+        <a href="#registration-terminal" class="gs-reveal group relative px-10 py-4 bg-black/60 backdrop-blur-md border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black neon-border cursor-pointer">
+            Access Mainframe
+        </a>
+    </div>
+</main>
+    <!-- EVENT DETAILS: MISSION BRIEFING -->
+<!-- EVENT DETAILS: MISSION BRIEFING -->
+<section id="mission-briefing" class="relative py-24 px-4 z-10 border-t border-stark-glow/20">
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Section Header -->
+        <div class="text-center mb-16 gs-reveal">
+            <h2 class="text-3xl md:text-5xl font-stark font-bold text-white uppercase tracking-widest mb-4">
+                <span class="text-stark-red">Classified</span> Intel
+            </h2>
+            <div class="h-1 w-24 bg-stark-glow mx-auto rounded shadow-[0_0_10px_#38bdf8]"></div>
+        </div>
+
+        <!-- The "Clickbait" Stats / Prize Banner (Glass Panels) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 gs-reveal">
+            <div class="bg-black/40 backdrop-blur-md border border-stark-glow/30 p-6 text-center transition-all hover:bg-stark-glow/10 hover:border-stark-glow hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] cursor-crosshair">
+                <i class="fa-solid fa-trophy text-3xl text-stark-glow mb-4 drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]"></i>
+                <h3 class="text-3xl font-stark text-white font-bold mb-2">₹1,00,000</h3>
+                <p class="text-stark-glow font-mono text-sm uppercase tracking-widest">Total Bounty Pool</p>
+            </div>
+            
+            <div class="bg-black/40 backdrop-blur-md border border-stark-red/50 p-6 text-center transition-all hover:bg-stark-red/10 hover:border-stark-red hover:shadow-[0_0_20px_rgba(226,54,54,0.4)] relative overflow-hidden cursor-crosshair">
+                <div class="absolute top-0 right-0 bg-stark-red text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest shadow-[0_0_10px_rgba(226,54,54,0.8)]">Priority Target</div>
+                <i class="fa-solid fa-briefcase text-3xl text-stark-red mb-4 drop-shadow-[0_0_8px_rgba(226,54,54,0.8)]"></i>
+                <h3 class="text-3xl font-stark text-white font-bold mb-2">Internships</h3>
+                <p class="text-stark-red font-mono text-sm uppercase tracking-widest">Stark Industries Roles</p>
+            </div>
+            
+            <div class="bg-black/40 backdrop-blur-md border border-stark-glow/30 p-6 text-center transition-all hover:bg-stark-glow/10 hover:border-stark-glow hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] cursor-crosshair">
+                <i class="fa-solid fa-stopwatch text-3xl text-stark-glow mb-4 drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]"></i>
+                <h3 class="text-3xl font-stark text-white font-bold mb-2">36 Hours</h3>
+                <p class="text-stark-glow font-mono text-sm uppercase tracking-widest">Development Window</p>
+            </div>
+        </div>
+
+        <!-- Hackathon Tracks Grid -->
+        <h3 class="text-2xl font-stark text-white mb-8 border-l-4 border-stark-red pl-4 gs-reveal uppercase tracking-wider drop-shadow-[0_0_5px_rgba(226,54,54,0.5)]">Active Protocols (Tracks)</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 gs-reveal">
+            <div class="group bg-black/40 backdrop-blur-md border border-stark-glow/20 p-8 transition-all hover:border-stark-glow/80 hover:bg-stark-glow/5 cursor-crosshair relative">
+                <i class="fa-solid fa-microchip text-4xl text-gray-500 group-hover:text-stark-glow group-hover:drop-shadow-[0_0_10px_rgba(56,189,248,0.8)] transition-all mb-6"></i>
+                <h4 class="text-2xl font-stark text-white mb-3 uppercase tracking-wider">J.A.R.V.I.S. Protocol</h4>
+                <p class="text-gray-400 font-mono text-sm leading-relaxed">
+                    Artificial Intelligence & Machine Learning. Build predictive models, LLM wrappers, or automated agents capable of assisting humanity.
+                </p>
+            </div>
+
+            <div class="group bg-black/40 backdrop-blur-md border border-stark-red/20 p-8 transition-all hover:border-stark-red/80 hover:bg-stark-red/5 cursor-crosshair relative">
+                <i class="fa-solid fa-shield-halved text-4xl text-gray-500 group-hover:text-stark-red group-hover:drop-shadow-[0_0_10px_rgba(226,54,54,0.8)] transition-all mb-6"></i>
+                <h4 class="text-2xl font-stark text-white mb-3 uppercase tracking-wider">Ultron Defense</h4>
+                <p class="text-gray-400 font-mono text-sm leading-relaxed">
+                    Cybersecurity & Blockchain. Develop unbreakable smart contracts, zero-knowledge proofs, or localized defense algorithms.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- REGISTRATION TERMINAL (Final Requirement) -->
+<section id="registration-terminal" class="relative py-24 px-4 z-10 bg-stark-dark border-t border-stark-glow/30">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-black/80 backdrop-blur-xl border border-gray-700 rounded-lg overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.9)] gs-reveal">
+            
+            <!-- Terminal Header -->
+            <div class="bg-gray-900 border-b border-gray-700 px-6 py-3 flex items-center justify-between">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-stark-glow shadow-[0_0_5px_#38bdf8]"></div>
+                </div>
+                <p class="font-mono text-gray-500 text-xs uppercase tracking-widest">root@jarvis:~/registration</p>
+            </div>
+
+            <!-- Terminal Form Body -->
+            <div class="p-8 md:p-12">
+                <h2 class="text-3xl font-stark text-white mb-2 uppercase tracking-widest">Initialize Registration</h2>
+                <p class="font-mono text-stark-glow mb-8 text-sm">System ready. Enter squad credentials below.</p>
+
+                <form class="space-y-6 font-mono">
+                    <!-- Commander Details -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Commander (Team Lead)</label>
+                                <input type="text" id="commander-name" placeholder="Tony Stark" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Comms (Email)</label>
+                                <input type="email" id="commander-email" placeholder="t.stark@stark.com" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                            </div>
+                        </div>
+                    
+                    <div>
+                        <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Squad Designation (Team Name)</label>
+                        <input type="text" placeholder="e.g. Iron Legion" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                    </div>
+
+<!-- Change this in your index.html file -->
+<a href="squad.html" class="block text-center w-full mt-8 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
+    Execute Registration File
+</a>        
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <script>
+        // --- SPIDER-MAN DRAG-TO-SCROLL LOGIC ---
+    let isDragging = false;
+    let startMouseY;
+    let startScrollY;
+    
+    const spideyThumb = document.getElementById('spidey-icon');
+    const spideyImg = spideyThumb.querySelector('img');
+
+    // 1. When the user clicks on Spider-Man
+    spideyThumb.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startMouseY = e.clientY;
+        startScrollY = window.scrollY;
+        
+        // Change cursor and pause the swing animation so he feels tight/responsive while dragging
+        spideyThumb.classList.replace('cursor-grab', 'cursor-grabbing');
+        spideyImg.style.animationPlayState = 'paused';
+        e.preventDefault(); // Prevents the browser from trying to "save" the image
+    });
+
+    // 2. When the user drags the mouse anywhere on the screen
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const docHeight = document.body.offsetHeight;
+        const winHeight = window.innerHeight;
+        const scrollableHeight = docHeight - winHeight;
+        const maxDrop = winHeight * 0.85; // The max distance the web can stretch
+        
+        // Calculate how far the mouse has moved from the starting click
+        const deltaY = e.clientY - startMouseY;
+        
+        // Convert that mouse movement into a percentage of the total scrollable area
+        const dragPercentage = deltaY / maxDrop;
+        
+        // Calculate and apply the new scroll position
+        const newScrollY = startScrollY + (dragPercentage * scrollableHeight);
+        window.scrollTo(0, newScrollY);
+    });
+
+    // 3. When the user lets go of the mouse click
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            
+            // Revert cursor and resume swing animation
+            spideyThumb.classList.replace('cursor-grabbing', 'cursor-grab');
+            spideyImg.style.animationPlayState = 'running';
+        }
+    });
+        // Spider-Man Scroll Tracker
+window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.offsetHeight;
+    const winHeight = window.innerHeight;
+    
+    // Calculate scroll percentage (0 to 1)
+    const scrollPercent = scrollTop / (docHeight - winHeight);
+    
+    const webLine = document.getElementById('web-line');
+    const spideyIcon = document.getElementById('spidey-icon');
+    
+    // Allow the web to drop down to 85% of the screen height
+    const maxDrop = winHeight * 0.85; 
+    
+    if (scrollTop > 20) {
+        spideyIcon.classList.remove('hidden');
+        // Apply the mapped height to the web line
+        webLine.style.height = (scrollPercent * maxDrop) + 'px';
+    } else {
+        // Hide Spidey when at the very top of the page
+        spideyIcon.classList.add('hidden');
+        webLine.style.height = '0px';
+    }
+
+    // --- REAL-TIME COMMANDER SYNC ---
+    const cmdNameInput = document.getElementById('commander-name');
+    const cmdEmailInput = document.getElementById('commander-email');
+    const op1NameInput = document.getElementById('op1-name');
+    const op1EmailInput = document.getElementById('op1-email');
+
+    cmdNameInput.addEventListener('input', (e) => {
+        op1NameInput.value = e.target.value;
+    });
+
+    cmdEmailInput.addEventListener('input', (e) => {
+        op1EmailInput.value = e.target.value;
+    });     
+});
+        const marvelVideo = document.getElementById('marvel-video');
+        const introScreen = document.getElementById('marvel-intro-screen');
+        const mainContent = document.getElementById('main-content');
+        const skipBtn = document.getElementById('skip-btn');
+
+        function revealSite() {
+            if (introScreen.style.display === 'none') return;
+            marvelVideo.pause();
+
+            gsap.to(introScreen, { 
+                opacity: 0, 
+                duration: 1.5, 
+                ease: "power2.inOut",
+                onComplete: () => {
+                    introScreen.style.display = 'none';
+                    mainContent.classList.remove('hidden');
+                    
+                    gsap.fromTo(".gs-reveal", 
+                        { y: 30, opacity: 0 }, 
+                        { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out" }
+                    );
+                }
+            });
+        }
+
+        marvelVideo.onended = revealSite;
+        skipBtn.addEventListener('click', revealSite);
+
+        setTimeout(() => {
+            if (marvelVideo.currentTime === 0) {
+                revealSite();
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

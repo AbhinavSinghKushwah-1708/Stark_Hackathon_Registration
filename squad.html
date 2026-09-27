@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stark Hackathon - Squad Assembly</title>
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        stark: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                    },
+                    colors: {
+                        stark: { red: '#E23636', glow: '#38bdf8', dark: '#0a0a0a' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0a0a0a; overflow-x: hidden; }
+        .neon-border { box-shadow: 0 0 10px #38bdf8, inset 0 0 10px #38bdf8; }
+        select option { background: #0a0a0a; color: #fff; }
+    </style>
+</head>
+<body class="text-white font-mono antialiased min-h-screen flex items-center justify-center p-4">
+
+    <!-- GLOBAL CINEMATIC BACKGROUND -->
+    <div class="fixed inset-0 z-[-1] bg-[url('stark-tower.jpg')] bg-cover bg-top bg-no-repeat bg-fixed opacity-40"></div>
+    <div class="fixed inset-0 z-[-1] bg-gradient-to-b from-stark-dark/10 via-stark-dark/70 to-stark-dark z-0"></div>
+
+    <!-- SQUAD ASSEMBLY TERMINAL -->
+    <main class="w-full max-w-5xl z-10 gs-reveal">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-stark font-black text-white uppercase tracking-wider drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                Assemble <span class="text-stark-glow">Your Squad</span>
+            </h1>
+            <p class="text-gray-400 mt-2">Designate operational roles for your remaining team members.</p>
+        </div>
+
+        <div class="bg-black/80 backdrop-blur-xl border border-stark-glow/30 rounded-lg shadow-[0_0_30px_rgba(0,0,0,0.9)] overflow-hidden">
+            <!-- Terminal Header -->
+            <div class="bg-gray-900 border-b border-gray-700 px-6 py-3 flex items-center justify-between">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-stark-glow"></div>
+                </div>
+                <p class="text-gray-500 text-xs uppercase tracking-widest">root@jarvis:~/squad-assembly</p>
+            </div>
+
+            <form class="p-8 md:p-12 space-y-10">
+                <!-- SQUAD MEMBER 1 -->
+                <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
+                    <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-user-astronaut mr-2"></i> Operative One
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Real Name</label>
+                            <!-- <input type="text" placeholder="Bruce Banner" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all"> -->
+                            <input type="text" id="op1-name" placeholder="Operative 1 Name" class="bg-gray-900/40 border border-gray-700 text-stark-glow px-3 py-2 text-sm focus:outline-none cursor-not-allowed" readonly>
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Email</label>
+                         <input type="email" id="op1-email" placeholder="Operative 1 Email" class="bg-gray-900/40 border border-gray-700 text-stark-glow px-3 py-2 text-sm focus:outline-none cursor-not-allowed" readonly>                        </div>
+                        <div>
+                            <label class="block text-stark-glow text-xs uppercase tracking-widest mb-2">Marvel Tech Class</label>
+                            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                                <option value="" disabled selected>Select Protocol (Role)</option>
+                                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                                <option value="hulk">The Hulk (Backend/Data)</option>
+                                <option value="shuri">Shuri (UI/UX Design)</option>
+                                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                                <option value="blackwidow">Black Widow (QA/Security)</option>
+                                <option value="vision">Vision (Data Science/Analytics)</option>
+                                <option value="antman">Ant-Man (Optimization)</option>
+                                <option value="fury">Nick Fury (Scrum Master)</option>
+                            </select>
+                        </div>
+                    </div>  
+                </div>
+
+                <!-- SQUAD MEMBER 2 -->
+                <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
+                    <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-user-ninja mr-2"></i> Operative Two
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Real Name</label>
+                            <input type="text" placeholder="Bruce Banner" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Email</label>
+                            <input type="email" placeholder="banner@avengers.com" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-stark-glow text-xs uppercase tracking-widest mb-2">Marvel Tech Class</label>
+                            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                                <option value="" disabled selected>Select Protocol (Role)</option>
+                                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                                <option value="hulk">The Hulk (Backend/Data)</option>
+                                <option value="shuri">Shuri (UI/UX Design)</option>
+                                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                                <option value="blackwidow">Black Widow (QA/Security)</option>
+                                <option value="vision">Vision (Data Science/Analytics)</option>
+                                <option value="antman">Ant-Man (Optimization)</option>
+                                <option value="fury">Nick Fury (Scrum Master)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
+                    <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-user-ninja mr-2"></i> Operative Three
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Real Name</label>
+                            <input type="text" placeholder="Bruce Banner" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Email</label>
+                            <input type="email" placeholder="banner@avengers.com" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-stark-glow text-xs uppercase tracking-widest mb-2">Marvel Tech Class</label>
+                            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                                <option value="" disabled selected>Select Protocol (Role)</option>
+                                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                                <option value="hulk">The Hulk (Backend/Data)</option>
+                                <option value="shuri">Shuri (UI/UX Design)</option>
+                                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                                <option value="blackwidow">Black Widow (QA/Security)</option>
+                                <option value="vision">Vision (Data Science/Analytics)</option>
+                                <option value="antman">Ant-Man (Optimization)</option>
+                                <option value="fury">Nick Fury (Scrum Master)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
+                    <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-user-ninja mr-2"></i> Operative Four
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Real Name</label>
+                            <input type="text" placeholder="Bruce Banner" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Email</label>
+                            <input type="email" placeholder="banner@avengers.com" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-stark-glow text-xs uppercase tracking-widest mb-2">Marvel Tech Class</label>
+                            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                                <option value="" disabled selected>Select Protocol (Role)</option>
+                                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                                <option value="hulk">The Hulk (Backend/Data)</option>
+                                <option value="shuri">Shuri (UI/UX Design)</option>
+                                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                                <option value="blackwidow">Black Widow (QA/Security)</option>
+                                <option value="vision">Vision (Data Science/Analytics)</option>
+                                <option value="antman">Ant-Man (Optimization)</option>
+                                <option value="fury">Nick Fury (Scrum Master)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
+                    <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-user-ninja mr-2"></i> Operative Five
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Real Name</label>
+                            <input type="text" placeholder="Bruce Banner" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Email</label>
+                            <input type="email" placeholder="banner@avengers.com" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-stark-glow text-xs uppercase tracking-widest mb-2">Marvel Tech Class</label>
+                            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                                <option value="" disabled selected>Select Protocol (Role)</option>
+                                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                                <option value="hulk">The Hulk (Backend/Data)</option>
+                                <option value="shuri">Shuri (UI/UX Design)</option>
+                                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                                <option value="blackwidow">Black Widow (QA/Security)</option>
+                                <option value="vision">Vision (Data Science/Analytics)</option>
+                                <option value="antman">Ant-Man (Optimization)</option>
+                                <option value="fury">Nick Fury (Scrum Master)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
+                    <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
+                        <i class="fa-solid fa-user-ninja mr-2"></i> Operative Six
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Real Name</label>
+                            <input type="text" placeholder="Bruce Banner" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Secure Email</label>
+                            <input type="email" placeholder="banner@avengers.com" class="w-full bg-black/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-stark-glow text-xs uppercase tracking-widest mb-2">Marvel Tech Class</label>
+                            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                                <option value="" disabled selected>Select Protocol (Role)</option>
+                                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                                <option value="hulk">The Hulk (Backend/Data)</option>
+                                <option value="shuri">Shuri (UI/UX Design)</option>
+                                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                                <option value="blackwidow">Black Widow (QA/Security)</option>
+                                <option value="vision">Vision (Data Science/Analytics)</option>
+                                <option value="antman">Ant-Man (Optimization)</option>
+                                <option value="fury">Nick Fury (Scrum Master)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-4 mt-8">
+                    <a href="index.html" class="px-6 py-4 text-center border border-gray-600 text-gray-400 font-stark font-bold uppercase tracking-widest transition-all hover:border-white hover:text-white w-full md:w-1/3">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Abort
+                    </a>
+                    <button type="button" class="px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8] w-full md:w-2/3">
+                        Finalize Squad Protocol
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script>
+    function addTeammate() {
+        const container = document.getElementById('roster-container');
+        if (container.children.length >= 3) {
+            alert("Maximum squad capacity reached (4 members).");
+            return;
+        }
+        
+        const newRow = document.createElement('div');
+        // Added 'teammate-row' class and updated grid template
+        newRow.className = "teammate-row grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 p-4 bg-black/40 border border-gray-700 mt-4 group transition-all hover:border-gray-500";
+        newRow.innerHTML = `
+            <input type="text" placeholder="Operative Name" class="bg-gray-900/80 border border-gray-700 text-white px-3 py-2 text-sm focus:outline-none focus:border-stark-glow">
+            <input type="email" placeholder="Email Address" class="bg-gray-900/80 border border-gray-700 text-white px-3 py-2 text-sm focus:outline-none focus:border-stark-glow">
+            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
+                <option value="" disabled selected>Select Protocol (Role)</option>
+                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
+                <option value="spiderman">Spider-Man (Frontend/Web)</option>
+                <option value="hulk">The Hulk (Backend/Data)</option>
+                <option value="shuri">Shuri (UI/UX Design)</option>
+                <option value="strange">Dr. Strange (AI/Algorithms)</option>
+                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
+                <option value="blackwidow">Black Widow (QA/Security)</option>
+                <option value="vision">Vision (Data Science/Analytics)</option>
+                <option value="antman">Ant-Man (Optimization)</option>
+                <option value="fury">Nick Fury (Scrum Master)</option>
+            </select>
+            
+            <!-- Dynamic Remove Button -->
+            <button type="button" onclick="this.closest('.teammate-row').remove()" class="bg-gray-900/80 border border-gray-700 text-gray-500 hover:text-stark-red hover:border-stark-red hover:shadow-[0_0_10px_rgba(226,54,54,0.5)] px-4 py-2 transition-all flex items-center justify-center" title="Remove Operative">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        `;
+        container.appendChild(newRow);
+    }
+</script>
+</body>
+</html>
