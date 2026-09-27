@@ -59,7 +59,16 @@
                 <p class="text-gray-500 text-xs uppercase tracking-widest">root@jarvis:~/squad-assembly</p>
             </div>
 
-            <form class="p-8 md:p-12 space-y-10">
+            <form id="squad-form" class="p-8 md:p-12 space-y-10">
+                <dialog id="squad-message" aria-labelledby="squad-message-title" class="m-auto w-full max-w-lg rounded-lg border border-stark-glow bg-gray-950 p-0 text-white shadow-[0_0_30px_rgba(56,189,248,0.35)] backdrop:bg-black/80">
+                    <div class="p-8 text-center">
+                        <h2 id="squad-message-title" class="mb-4 font-stark text-2xl uppercase tracking-widest"></h2>
+                        <p id="squad-message-text" class="mb-6 break-words text-lg" role="status" aria-live="polite"></p>
+                        <button id="close-squad-message" type="button" class="border border-stark-glow px-6 py-3 font-stark font-bold uppercase tracking-widest text-stark-glow transition-all hover:bg-stark-glow hover:text-black">
+                            Close
+                        </button>
+                    </div>
+                </dialog>
                 <!-- SQUAD MEMBER 1 -->
                 <div class="p-6 bg-gray-900/50 border border-gray-700 rounded transition-all hover:border-stark-glow/50">
                     <h3 class="font-stark text-xl text-stark-glow mb-4 uppercase tracking-widest border-b border-gray-700 pb-2">
@@ -254,7 +263,7 @@
                     <a href="index.html" class="px-6 py-4 text-center border border-gray-600 text-gray-400 font-stark font-bold uppercase tracking-widest transition-all hover:border-white hover:text-white w-full md:w-1/3">
                         <i class="fa-solid fa-arrow-left mr-2"></i> Abort
                     </a>
-                    <button type="button" class="px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8] w-full md:w-2/3">
+                    <button id="finalize-squad" type="submit" class="px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8] w-full md:w-2/3">
                         Finalize Squad Protocol
                     </button>
                 </div>
@@ -264,40 +273,204 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script>
-    function addTeammate() {
-        const container = document.getElementById('roster-container');
-        if (container.children.length >= 3) {
-            alert("Maximum squad capacity reached (4 members).");
+    const draftStorageKey = 'starkHackathonDraft';
+    const registrationsStorageKey = 'starkHackathonRegistrations';
+    const squadForm = document.getElementById('squad-form');
+    const squadMessage = document.getElementById('squad-message');
+    const squadMessageTitle = document.getElementById('squad-message-title');
+    const squadMessageText = document.getElementById('squad-message-text');
+    const finalizeButton = document.getElementById('finalize-squad');
+    let registrationCompleted = false;
+    const namePattern = /^[\p{L}\p{M}]+(?:[ .'-][\p{L}\p{M}]+)*\.?$/u;
+    const memberCards = Array.from(squadForm.querySelectorAll('h3'), (heading) => heading.parentElement);
+    const memberFields = memberCards.map((card) => ({
+        name: card.querySelector('input[type="text"]'),
+        email: card.querySelector('input[type="email"]'),
+        role: card.querySelector('select')
+    }));
+
+    function showMessage(message, isError) {
+        squadMessageTitle.textContent = isError ? 'Squad Finalization Failed' : 'Registration Successful';
+        squadMessageTitle.className = `mb-4 font-stark text-2xl uppercase tracking-widest ${isError ? 'text-stark-red' : 'text-stark-glow'}`;
+        squadMessageText.textContent = message;
+        squadMessageText.className = `mb-6 break-words text-lg ${isError ? 'text-stark-red' : 'text-white'}`;
+        if (!squadMessage.open) {
+            squadMessage.showModal();
+        }
+        document.getElementById('close-squad-message').focus();
+    }
+
+    function readDraft() {
+        const serializedDraft = localStorage.getItem(draftStorageKey);
+        if (!serializedDraft) {
+            return null;
+        }
+        const draft = JSON.parse(serializedDraft);
+        if (!draft || !draft.commander || !draft.commander.name || !draft.commander.email || !draft.teamName) {
+            throw new Error('The saved registration draft is incomplete.');
+        }
+        return draft;
+    }
+
+    function getMemberData() {
+        return memberFields.map(({ name, email, role }) => ({
+            name: name.value.trim(),
+            email: email.value.trim(),
+            role: role.value,
+            roleName: role.selectedOptions[0].textContent.trim()
+        }));
+    }
+
+    function saveDraft() {
+        const draft = readDraft();
+        if (!draft) {
+            throw new Error('Registration details are missing. Return to the registration page and try again.');
+        }
+        draft.squad = getMemberData();
+        localStorage.setItem(draftStorageKey, JSON.stringify(draft));
+    }
+
+    function setNameValidity(input) {
+        const value = input.value.trim();
+        input.setCustomValidity(
+            value && (!namePattern.test(value) || /[bcdfghjklmnpqrstvwxz]{5,}/i.test(value))
+                ? 'Enter a valid name using letters, spaces, apostrophes, periods, or hyphens.'
+                : ''
+        );
+    }
+
+    function generateRegistrationId(existingIds) {
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let attempt = 0; attempt < 10; attempt += 1) {
+            let id = '';
+            while (id.length < 12) {
+                const bytes = crypto.getRandomValues(new Uint8Array(16));
+                for (const byte of bytes) {
+                    if (byte < 248) {
+                        id += alphabet[byte % alphabet.length];
+                        if (id.length === 12) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!existingIds.has(id)) {
+                return id;
+            }
+        }
+        throw new Error('Unable to create a unique registration ID. Please try again.');
+    }
+
+    try {
+        const draft = readDraft();
+        if (!draft) {
+            throw new Error('No registration details found. Return to the registration page to begin.');
+        }
+        memberFields[0].name.value = draft.commander.name;
+        memberFields[0].email.value = draft.commander.email;
+
+        if (Array.isArray(draft.squad)) {
+            draft.squad.slice(1).forEach((member, index) => {
+                if (memberFields[index + 1]) {
+                    memberFields[index + 1].name.value = member.name || '';
+                    memberFields[index + 1].email.value = member.email || '';
+                    memberFields[index + 1].role.value = member.role || '';
+                }
+            });
+        }
+
+        memberFields.forEach(({ name, email, role }, index) => {
+            role.required = true;
+            if (index > 0) {
+                name.required = true;
+                name.minLength = 2;
+                name.maxLength = 60;
+                email.required = true;
+                name.addEventListener('input', () => setNameValidity(name));
+                setNameValidity(name);
+            }
+            email.addEventListener('input', () => email.setCustomValidity(''));
+            role.addEventListener('change', () => role.setCustomValidity(''));
+        });
+
+        squadForm.addEventListener('input', () => {
+            if (registrationCompleted) {
+                return;
+            }
+            try {
+                saveDraft();
+            } catch (error) {
+                showMessage(error.message || 'Unable to save your squad draft in this browser.', true);
+                console.error('Unable to save squad draft:', error);
+            }
+        });
+        squadForm.addEventListener('change', () => {
+            if (registrationCompleted) {
+                return;
+            }
+            try {
+                saveDraft();
+            } catch (error) {
+                showMessage(error.message || 'Unable to save your squad draft in this browser.', true);
+                console.error('Unable to save squad draft:', error);
+            }
+        });
+    } catch (error) {
+        showMessage(error.message || 'Unable to load your saved registration.', true);
+        finalizeButton.disabled = true;
+        console.error('Unable to load registration draft:', error);
+    }
+
+    document.getElementById('close-squad-message').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
+
+    squadForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const editableEmails = memberFields.slice(1).map(({ email }) => email);
+        const emailAddresses = [memberFields[0].email.value.trim(), ...editableEmails.map(({ value }) => value.trim())];
+        const duplicateEmailIndex = emailAddresses.findIndex((email, index) => emailAddresses.indexOf(email) !== index);
+        if (duplicateEmailIndex > 0) {
+            editableEmails[duplicateEmailIndex - 1].setCustomValidity('Each operative must use a different email address.');
+        }
+        if (!squadForm.reportValidity()) {
             return;
         }
-        
-        const newRow = document.createElement('div');
-        // Added 'teammate-row' class and updated grid template
-        newRow.className = "teammate-row grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr_auto] gap-4 p-4 bg-black/40 border border-gray-700 mt-4 group transition-all hover:border-gray-500";
-        newRow.innerHTML = `
-            <input type="text" placeholder="Operative Name" class="bg-gray-900/80 border border-gray-700 text-white px-3 py-2 text-sm focus:outline-none focus:border-stark-glow">
-            <input type="email" placeholder="Email Address" class="bg-gray-900/80 border border-gray-700 text-white px-3 py-2 text-sm focus:outline-none focus:border-stark-glow">
-            <select class="bg-gray-900/80 border border-gray-700 text-gray-300 px-3 py-2 text-sm focus:outline-none focus:border-stark-glow appearance-none">
-                <option value="" disabled selected>Select Protocol (Role)</option>
-                <option value="ironman">Iron Man (Systems/Full-Stack)</option>
-                <option value="spiderman">Spider-Man (Frontend/Web)</option>
-                <option value="hulk">The Hulk (Backend/Data)</option>
-                <option value="shuri">Shuri (UI/UX Design)</option>
-                <option value="strange">Dr. Strange (AI/Algorithms)</option>
-                <option value="rocket">Rocket Raccoon (DevOps/Cloud)</option>
-                <option value="blackwidow">Black Widow (QA/Security)</option>
-                <option value="vision">Vision (Data Science/Analytics)</option>
-                <option value="antman">Ant-Man (Optimization)</option>
-                <option value="fury">Nick Fury (Scrum Master)</option>
-            </select>
-            
-            <!-- Dynamic Remove Button -->
-            <button type="button" onclick="this.closest('.teammate-row').remove()" class="bg-gray-900/80 border border-gray-700 text-gray-500 hover:text-stark-red hover:border-stark-red hover:shadow-[0_0_10px_rgba(226,54,54,0.5)] px-4 py-2 transition-all flex items-center justify-center" title="Remove Operative">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        `;
-        container.appendChild(newRow);
-    }
+
+        try {
+            const registrations = JSON.parse(localStorage.getItem(registrationsStorageKey) || '[]');
+            if (!Array.isArray(registrations)) {
+                throw new Error('Saved registration data is invalid. Please contact the site administrator.');
+            }
+            const existingIds = new Set(registrations.map(({ registrationId }) => registrationId));
+            const registration = {
+                registrationId: generateRegistrationId(existingIds),
+                createdAt: new Date().toISOString(),
+                teamName: readDraft().teamName,
+                commander: {
+                    name: memberFields[0].name.value.trim(),
+                    email: memberFields[0].email.value.trim()
+                },
+                members: getMemberData()
+            };
+            registrations.push(registration);
+            localStorage.setItem(registrationsStorageKey, JSON.stringify(registrations));
+            registrationCompleted = true;
+            try {
+                localStorage.removeItem(draftStorageKey);
+            } catch (error) {
+                console.error('Unable to clear completed registration draft:', error);
+            }
+            showMessage(`Squad finalized successfully! Your 12-character registration ID is ${registration.registrationId}. Returning to the registration page in 5 seconds.`, false);
+            finalizeButton.disabled = true;
+            window.setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 5000);
+        } catch (error) {
+            showMessage(error.message || 'Unable to save your squad. Please enable browser storage and try again.', true);
+            console.error('Unable to finalize squad:', error);
+        }
+    });
 </script>
 </body>
 </html>
