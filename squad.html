@@ -425,7 +425,7 @@
         window.location.href = 'index.html';
     });
 
-    squadForm.addEventListener('submit', (event) => {
+    squadForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const editableEmails = memberFields.slice(1).map(({ email }) => email);
         const emailAddresses = [memberFields[0].email.value.trim(), ...editableEmails.map(({ value }) => value.trim())];
@@ -453,6 +453,25 @@
                 },
                 members: getMemberData()
             };
+
+            // --- Send to backend server ---
+            finalizeButton.disabled = true;
+            finalizeButton.textContent = 'Transmitting...';
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(registration)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.warn('Server returned an error:', errorData);
+                }
+            } catch (networkError) {
+                console.warn('Backend unreachable — data saved to browser only:', networkError);
+            }
+
+            // --- Also persist to localStorage as before ---
             registrations.push(registration);
             localStorage.setItem(registrationsStorageKey, JSON.stringify(registrations));
             registrationCompleted = true;
@@ -462,11 +481,12 @@
                 console.error('Unable to clear completed registration draft:', error);
             }
             showMessage(`Squad finalized successfully! Your 12-character registration ID is ${registration.registrationId}. Returning to the registration page in 5 seconds.`, false);
-            finalizeButton.disabled = true;
             window.setTimeout(() => {
                 window.location.href = 'index.html';
             }, 5000);
         } catch (error) {
+            finalizeButton.disabled = false;
+            finalizeButton.textContent = 'Finalize Squad Protocol';
             showMessage(error.message || 'Unable to save your squad. Please enable browser storage and try again.', true);
             console.error('Unable to finalize squad:', error);
         }
