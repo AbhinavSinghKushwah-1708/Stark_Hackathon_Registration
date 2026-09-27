@@ -201,13 +201,16 @@
                     
                     <div>
                         <label class="block text-gray-400 text-xs uppercase tracking-widest mb-2">Squad Designation (Team Name)</label>
-                        <input type="text" placeholder="e.g. Iron Legion" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
+                        <input type="text" id="squad-name" placeholder="e.g. Iron Legion" class="w-full bg-gray-900/50 border border-gray-700 text-white px-4 py-3 focus:outline-none focus:border-stark-glow transition-all">
                     </div>
 
 <!-- Change this in your index.html file -->
-<a href="squad.html" class="block text-center w-full mt-8 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
-    Execute Registration File
-</a>        
+ <button type="button" onclick="validateRegistration()" id="execute-btn" class="w-full mt-4 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
+
+     <a href="squad.html" class="block text-center w-full mt-8 px-6 py-4 bg-stark-glow/10 border border-stark-glow text-stark-glow font-stark font-bold uppercase tracking-widest transition-all hover:bg-stark-glow hover:text-black hover:shadow-[0_0_20px_#38bdf8]">
+         Execute Registration File
+        </a>        
+    </button>
                 </form>
             </div>
         </div>
@@ -221,6 +224,63 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
     <script>
+        // --- J.A.R.V.I.S. FORM VALIDATION ---
+    function validateRegistration() {
+        const errorDiv = document.getElementById('form-error');
+        const squadName = document.getElementById('squad-name').value.trim();
+        const cmdName = document.getElementById('commander-name').value.trim();
+        const cmdEmail = document.getElementById('commander-email').value.trim();
+        const rosterContainer = document.getElementById('roster-container');
+        
+        // Reset error state
+        errorDiv.classList.add('hidden');
+        errorDiv.textContent = "";
+
+        // 1. Check if Commander fields are empty
+        if (!cmdName || !cmdEmail) {
+            showError("ACCESS DENIED: Commander credentials cannot be blank.");
+            return;
+        }
+
+        // 2. Anti-Gibberish Check for Squad Name (Only letters, numbers, spaces, min 3 chars)
+        const squadNameRegex = /^[a-zA-Z0-9\s]{3,30}$/;
+        if (!squadNameRegex.test(squadName)) {
+            showError("ACCESS DENIED: Squad Designation invalid. Use 3-30 alphanumeric characters. No special symbols.");
+            return;
+        }
+
+        // 3. Check all Operative fields (Iterate through every input and select in the roster)
+        const rosterInputs = rosterContainer.querySelectorAll('input, select');
+        for (let i = 0; i < rosterInputs.length; i++) {
+            if (!rosterInputs[i].value.trim()) {
+                showError("ACCESS DENIED: Incomplete operative data detected in Squad Roster.");
+                return;
+            }
+        }
+
+        // 4. If everything passes, execute success sequence!
+        const executeBtn = document.getElementById('execute-btn');
+        executeBtn.textContent = "UPLOADING TO STARK MAINFRAME...";
+        executeBtn.classList.replace('text-stark-glow', 'text-white');
+        executeBtn.classList.replace('border-stark-glow', 'border-white');
+        
+        // Simulate a page redirect or final success state after 2 seconds
+        setTimeout(() => {
+            executeBtn.classList.replace('bg-stark-glow/10', 'bg-green-500');
+            executeBtn.classList.replace('border-white', 'border-green-500');
+            executeBtn.textContent = "REGISTRATION COMPLETE";
+            
+            // Optional: Redirect to a success page here
+            // window.location.href = "success.html";
+        }, 2000);
+    }
+
+    // Helper function to display the red error box
+    function showError(message) {
+        const errorDiv = document.getElementById('form-error');
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+    }
         // --- SPIDER-MAN DRAG-TO-SCROLL LOGIC ---
     let isDragging = false;
     let startMouseY;
